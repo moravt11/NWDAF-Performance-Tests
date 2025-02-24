@@ -1,0 +1,21 @@
+{
+    "notifId": "handover-rel-123",
+    "eventNotifs": [
+      {
+        "event": "PDU_SES_REL",
+        "timeStamp": "2025-01-22T10:30:00Z",
+        "pduSeId": "pdu-001",
+        "plmnId": {
+          "mcc": "230",
+          "mnc": "01"
+        },
+        "supi": "230010999999999",
+        "dnn": "internet.mnc01.mcc230.gprs",
+        "snssai": {
+          "sst": 1,
+          "sd": "A02B3F"
+        }
+      }
+    ],
+    "ackUri": "https://amf.network.com/callback/handover-123"
+  }

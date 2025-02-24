@@ -1,0 +1,18 @@
+{
+    "notifId": "ac-type-change-001",
+    "eventNotifs": [
+      {
+        "event": "AC_TY_CH",
+        "timeStamp": "2025-01-22T14:30:00Z",
+        "pduSeId": "pdu-session-789",
+        "accType": "NON_3GPP_ACCESS",
+        "addAccInfo": {
+          "accessType": "WIRELINE",
+          "rwaNwId": "RWA-NET-001"
+        },
+        "ueIpv4": "10.0.15.100",
+        "ueIpv6": "2001:db8:85a3::8a2e:370:7334"
+      }
+    ],
+    "ackUri": "https://nef.example.com/callbacks/ac-type"
+  }

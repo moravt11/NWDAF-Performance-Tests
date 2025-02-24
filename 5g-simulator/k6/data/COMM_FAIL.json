@@ -1,0 +1,23 @@
+{
+    "notifId": "comm-fail-001",
+    "eventNotifs": [
+      {
+        "event": "COMM_FAIL",
+        "timeStamp": "2025-01-22T13:15:00Z",
+        "pduSeId": "pdu-session-555",
+        "supi": "23010999999999",
+        "failureCode": "UE_NOT_RESPONDING",
+        "recoveryTime": "2025-01-22T13:16:30Z",
+        "plmnId": {
+          "mcc": "230",
+          "mnc": "15"
+        },
+        "commFailureCause": {
+          "cause": "RADIO_LINK_FAILURE",
+          "ngApCause": "RADIO_NETWORK_LAYER",
+          "additionalInfo": "Signal strength below threshold"
+        }
+      }
+    ],
+    "ackUri": "https://amf.example.com/callbacks/comm-fail"
+  }

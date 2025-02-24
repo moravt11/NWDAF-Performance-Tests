@@ -1,0 +1,29 @@
+{
+    "notifId": "pdu-est-005",
+    "eventNotifs": [
+      {
+        "event": "PDU_SES_EST",
+        "timeStamp": "2025-01-22T09:30:00Z",
+        "pduSeId": "pdu-session-999",
+        "supi": "23010999999999",
+        "dnn": "internet.mnc01.mcc230.gprs",
+        "snssai": {
+          "sst": 1,
+          "sd": "A02B3F"
+        },
+        "qosInfo": {
+          "5qi": 5,
+          "arp": {
+            "priorityLevel": 1,
+            "preemptCap": "NOT_PREEMPT",
+            "preemptVuln": "NOT_PREEMPTABLE"
+          },
+          "maxbrUl": "100Mbps",
+          "maxbrDl": "200Mbps"
+        },
+        "ipv4Addr": "10.0.15.200",
+        "ipv6Prefix": "2001:db8:85a3::/64"
+      }
+    ],
+    "ackUri": "https://pcf.example.com/callbacks/pdu-est"
+  }

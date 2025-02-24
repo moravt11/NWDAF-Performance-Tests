@@ -1,0 +1,27 @@
+{
+    "notifId": "up-status-004",
+    "eventNotifs": [
+      {
+        "event": "UP_STATUS_INFO",
+        "timeStamp": "2025-01-22T17:20:00Z",
+        "pduSeId": "pdu-session-777",
+        "supi": "23010999999999",
+        "upStatus": {
+          "pathStatus": "ACTIVATED",
+          "cnTunnelInfo": {
+            "ipv4Addr": "10.0.0.100",
+            "gTPTeid": "0x12305678"
+          },
+          "anTunnelInfo": {
+            "ipv4Addr": "10.0.1.100",
+            "gTPTeid": "0x87654321"
+          },
+          "additionalTnlInfo": {
+            "ipv4Addr": "10.0.2.100",
+            "udpPortNumber": 2152
+          }
+        }
+      }
+    ],
+    "ackUri": "https://upf.example.com/callbacks/up-status"
+  }

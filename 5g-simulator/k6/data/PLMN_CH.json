@@ -1,0 +1,21 @@
+{
+    "notifId": "plmn-change-002",
+    "eventNotifs": [
+      {
+        "event": "PLMN_CH",
+        "timeStamp": "2025-01-22T16:15:00Z",
+        "pduSeId": "pdu-session-456",
+        "plmnId": {
+          "mcc": "262",
+          "mnc": "01"    
+        },
+        "prevPlmnId": {
+          "mcc": "230",  
+          "mnc": "15"   
+        },
+        "supi": "23010999999999",
+        "dnn": "internet.mnc001.mcc262.gprs"
+      }
+    ],
+    "ackUri": "https://pcf.example.com/callbacks/plmn-change"
+  }

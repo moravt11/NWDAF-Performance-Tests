@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/npcf-dummy-trigger"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "UE_MOBILITY.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

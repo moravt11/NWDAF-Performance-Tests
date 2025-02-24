@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/nnwdaf-analyticsinfo/v1/notify",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.notifId"
+      }
+    ]
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "Content-Type": "application/json",
+      "Location": "/nnwdaf-analyticsinfo/v1/subscriptions/{{randomValue length=8 type='ALPHANUMERIC'}}",
+      "3gpp-Sbi-Message-Priority": "3",
+      "3gpp-Sbi-Callback": "{{request.headers.3gpp-Sbi-Callback}}",
+      "3gpp-Sbi-Target-apiRoot": "{{request.headers.3gpp-Sbi-Target-apiRoot}}"
+    }
+  }
+}

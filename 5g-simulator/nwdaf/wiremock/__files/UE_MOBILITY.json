@@ -1,0 +1,31 @@
+{
+  "event": "UE_MOBILITY",
+  "timeStampGen": "2025-01-23T14:30:00Z",
+  "ueMobs": [
+    {
+      "ts": "2025-01-23T14:30:00Z",
+      "duration": 300,
+      "durationVariance": 30.5,
+      "locInfos": [
+        {
+          "loc": {
+            "point": {
+              "lat": 50.073658,
+              "lon": 14.418540
+            }
+          },
+          "ratio": 45
+        },
+        {
+          "loc": {
+            "point": {
+              "lat": 50.075958,
+              "lon": 14.414511
+            }
+          },
+          "ratio": 55
+        }
+      ]
+    }
+  ]
+}

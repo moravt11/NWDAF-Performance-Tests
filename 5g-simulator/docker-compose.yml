@@ -1,0 +1,62 @@
+version: '2.4'
+
+services:
+  nwdaf:
+    build: ./nwdaf
+    ports:
+      - "8080:8080"
+    networks:
+      - 5g-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/__admin/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    networks:
+      - 5g-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  k6:
+    build: ./k6
+    depends_on:
+      nwdaf:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    networks:
+      - 5g-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      influxdb:
+        condition: service_healthy
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/etc/grafana/dashboards
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - 5g-network
+
+networks:
+  5g-network:
+    driver: bridge
+
+volumes:
+  influxdb-storage:
+  grafana-storage:
