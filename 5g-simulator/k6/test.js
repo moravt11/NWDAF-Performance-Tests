@@ -12,21 +12,21 @@ const SCENARIO_RATES = {
   PCF_DUMMY_TRIGGER: 10
 };
 
-const MAX_SCENARIO_VUS = 100;
+const MAX_SCENARIO_VUS = 250;
 
 const SCENARIO_START_TIMES = {
   PDU_SESSION_RELEASE: 0,
-  PLMN_CHANGE: 30,
-  ACCESS_TYPE_CHANGE: 45,
-  UP_STATUS_INFO: 15,
-  PDU_SESSION_EST: 60,
-  COMM_FAIL: 75,
-  PCF_DUMMY_TRIGGER: 90
+  UP_STATUS_INFO: 0,
+  PLMN_CHANGE: 0,
+  ACCESS_TYPE_CHANGE: 0,
+  PDU_SESSION_EST: 0,
+  COMM_FAIL: 0,
+  PCF_DUMMY_TRIGGER: 0
 };
 
 const TIME_CONFIG = {
   TIME_UNIT: '1s',
-  DURATION: '10m'
+  DURATION: '5m'
 };
 
 // Custom metrics
@@ -36,7 +36,6 @@ const scenarioLatency = new Trend('scenario_latency');
 const scenarioErrors = new Rate('scenario_errors');
 const eventTypeCounter = new Counter('event_type_count');
 const scenarioCounter = new Counter('scenario_executions');
-const expectedRate = new Gauge('expected_rate');
 const inputThroughputBytes = new Counter('inputThroughput_bytes');
 const inputThroughputRate = new Trend('inputThroughput_rate');
 const outputThroughputBytes = new Counter('outputThroughput_bytes');
@@ -53,78 +52,75 @@ function loadJsonFile(path) {
   }
 }
 
+const COMMON_STAGES = [
+  { duration: '30s', target: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)) },
+  { duration: '1m', target: Math.round(MAX_SCENARIO_VUS / 2) },
+  { duration: '2m', target: MAX_SCENARIO_VUS }
+];
+
 export let options = {
   scenarios: {
     pduSessionRelease: {
-      executor: 'constant-arrival-rate',
-      rate: SCENARIO_RATES.PDU_SESSION_RELEASE,
-      preAllocatedVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      maxVUs: MAX_SCENARIO_VUS,
-      timeUnit: TIME_CONFIG.TIME_UNIT,
-      duration: TIME_CONFIG.DURATION,
+      executor: 'ramping-vus',
+      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+      stages: COMMON_STAGES,
       exec: 'pduSessionReleaseScenario',
       startTime: SCENARIO_START_TIMES.PDU_SESSION_RELEASE + 's'     
     },
     plmnChange: {
-      executor: 'constant-arrival-rate',
-      rate: SCENARIO_RATES.PLMN_CHANGE,
-      preAllocatedVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      maxVUs: MAX_SCENARIO_VUS,
-      timeUnit: TIME_CONFIG.TIME_UNIT,
-      duration: TIME_CONFIG.DURATION,
+      executor: 'ramping-vus',
+      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+      stages: COMMON_STAGES,
       exec: 'plmnChangeScenario',
       startTime: SCENARIO_START_TIMES.PLMN_CHANGE + 's'     
     },
     acTyChange: {
-      executor: 'constant-arrival-rate',
-      rate: SCENARIO_RATES.ACCESS_TYPE_CHANGE,
-      preAllocatedVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      maxVUs: MAX_SCENARIO_VUS,
-      timeUnit: TIME_CONFIG.TIME_UNIT,
-      duration: TIME_CONFIG.DURATION,
+      executor: 'ramping-vus',
+      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+      stages: COMMON_STAGES,
       exec: 'acTyChangeScenario',
       startTime: SCENARIO_START_TIMES.ACCESS_TYPE_CHANGE + 's'       
     },
     upStatusInfo: {
-      executor: 'constant-arrival-rate',
-      rate: SCENARIO_RATES.UP_STATUS_INFO,
-      preAllocatedVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      maxVUs: MAX_SCENARIO_VUS,
-      timeUnit: TIME_CONFIG.TIME_UNIT,
-      duration: TIME_CONFIG.DURATION,
+      executor: 'ramping-vus',
+      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+      stages: COMMON_STAGES,
       exec: 'upStatusInfoScenario',
       startTime: SCENARIO_START_TIMES.UP_STATUS_INFO + 's'
     },
     pduSessionEst: {
-      executor: 'constant-arrival-rate',
-      rate: SCENARIO_RATES.PDU_SESSION_EST,
-      preAllocatedVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      maxVUs: MAX_SCENARIO_VUS,
-      timeUnit: TIME_CONFIG.TIME_UNIT,
-      duration: TIME_CONFIG.DURATION,
+      executor: 'ramping-vus',
+      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+      stages: COMMON_STAGES,
       exec: 'pduSessionEstScenario',
       startTime: SCENARIO_START_TIMES.PDU_SESSION_EST + 's'
     },
     commFail: {
-      executor: 'constant-arrival-rate',
-      rate: SCENARIO_RATES.COMM_FAIL,
-      preAllocatedVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      maxVUs: MAX_SCENARIO_VUS,
-      timeUnit: TIME_CONFIG.TIME_UNIT,
-      duration: TIME_CONFIG.DURATION,
+      executor: 'ramping-vus',
+      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+      stages: COMMON_STAGES,
       exec: 'commFailScenario',
       startTime: SCENARIO_START_TIMES.COMM_FAIL + 's'       
     },
     pcfDummyTrigger: {
-      executor: 'constant-arrival-rate',
-      rate: SCENARIO_RATES.PCF_DUMMY_TRIGGER,
-      preAllocatedVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      maxVUs: MAX_SCENARIO_VUS,
-      timeUnit: TIME_CONFIG.TIME_UNIT,
-      duration: TIME_CONFIG.DURATION,
+      executor: 'ramping-vus',
+      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+      stages: COMMON_STAGES,
       exec: 'pcfDummyTriggerScenario',
       startTime: SCENARIO_START_TIMES.PCF_DUMMY_TRIGGER + 's'
     }
+  },
+  ext: {
+    loadimpact: {
+      distribution: {
+        'local': null
+      }
+    }
+  },
+  influxdb: {
+    flushPeriod: '10s',      // Increase from default
+    bufferSize: 5000,        // Increase buffer size
+    concurrentWrites: 10     // Reduce concurrent writes
   }
 };
 
@@ -186,7 +182,6 @@ function safelyAddMetric(metric, value, tags = {}) {
 function sendNotification(payload, scenarioType) {
   try {
     const startTime = new Date();
-    updateExpectedRate();
     
     const payloadString = JSON.stringify(payload);
     const payloadSize = payloadString.length;
@@ -228,21 +223,6 @@ function sendNotification(payload, scenarioType) {
       payload: payload
     });
     safelyAddMetric(scenarioErrors, 1, { type: 'error', scenario: scenarioType });
-  }
-}
-
-function updateExpectedRate() {
-  const runTime = (new Date() - TEST_START_TIME) / 1000; // seconds
-  let totalRate = 0;
-
-  Object.entries(SCENARIO_START_TIMES).forEach(([scenario, startTime]) => {
-    if (runTime >= startTime) {
-      totalRate += SCENARIO_RATES[scenario];
-    }
-  });
-
-  if (isValidNumber(totalRate)) {
-    safelyAddMetric(expectedRate, totalRate);
   }
 }
 
