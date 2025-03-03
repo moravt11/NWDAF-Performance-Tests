@@ -1,11 +1,13 @@
 FROM grafana/k6:latest
 
-WORKDIR /usr/src/app
+# Create app directory
+WORKDIR /app
 
-RUN mkdir -p /usr/src/app/data
+# Copy test files
+COPY . .
 
-COPY data/* /usr/src/app/data/
-COPY *.js /usr/src/app/
+# Set environment variables with defaults
+ENV TEST_TYPE=SPIKE
 
-
-ENTRYPOINT ["k6", "run", "--out", "influxdb=http://influxdb:8086/k6", "/usr/src/app/test.js"]
+# Set the entrypoint to run the test with the configured test type
+ENTRYPOINT ["k6", "run", "--out", "influxdb=http://influxdb:8086/k6", "/app/test.js"]

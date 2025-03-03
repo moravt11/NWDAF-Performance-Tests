@@ -1,115 +1,36 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Counter, Trend, Rate, Gauge } from 'k6/metrics';
+import {
+  ENDPOINTS,
+  notificationLatency,
+  scenarioRate,
+  scenarioLatency,
+  scenarioErrors,
+  eventTypeCounter,
+  scenarioCounter,
+  inputThroughputBytes,
+  inputThroughputRate,
+  outputThroughputBytes,
+  outputThroughputRate,
+  PDU_SES_REL,
+  PLMN_CH,
+  AC_TY_CH,
+  UP_STATUS_INFO,
+  PDU_SES_EST,
+  COMM_FAIL
+} from './config/commonConfig.js';
 
-const SCENARIO_RATES = {
-  PDU_SESSION_RELEASE: 10,
-  PLMN_CHANGE: 10,
-  ACCESS_TYPE_CHANGE: 30,
-  UP_STATUS_INFO: 30,
-  PDU_SESSION_EST: 30,
-  COMM_FAIL: 30,
-  PCF_DUMMY_TRIGGER: 10
-};
+import {
+  SCENARIOS,
+  INFLUXDB_CONFIG,
+  TEST_TYPE,
+  MAX_SCENARIO_VUS,
+  TIME_CONFIG
+} from './config/configSelector.js';
 
-const MAX_SCENARIO_VUS = 250;
-
-const SCENARIO_START_TIMES = {
-  PDU_SESSION_RELEASE: 0,
-  UP_STATUS_INFO: 0,
-  PLMN_CHANGE: 0,
-  ACCESS_TYPE_CHANGE: 0,
-  PDU_SESSION_EST: 0,
-  COMM_FAIL: 0,
-  PCF_DUMMY_TRIGGER: 0
-};
-
-const TIME_CONFIG = {
-  TIME_UNIT: '1s',
-  DURATION: '5m'
-};
-
-// Custom metrics
-const notificationLatency = new Trend('notification_latency');
-const scenarioRate = new Rate('scenario_success');
-const scenarioLatency = new Trend('scenario_latency');
-const scenarioErrors = new Rate('scenario_errors');
-const eventTypeCounter = new Counter('event_type_count');
-const scenarioCounter = new Counter('scenario_executions');
-const inputThroughputBytes = new Counter('inputThroughput_bytes');
-const inputThroughputRate = new Trend('inputThroughput_rate');
-const outputThroughputBytes = new Counter('outputThroughput_bytes');
-const outputThroughputRate = new Trend('outputThroughput_rate');
-
-// Load all sample data files
-function loadJsonFile(path) {
-  try {
-    const data = open(path);
-    return JSON.stringify(JSON.parse(data));  // store fresh copy
-  } catch (error) {
-    console.error(`Failed to load ${path}: ${error.message}`);
-    throw error;
-  }
-}
-
-const COMMON_STAGES = [
-  { duration: '30s', target: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)) },
-  { duration: '1m', target: Math.round(MAX_SCENARIO_VUS / 2) },
-  { duration: '2m', target: MAX_SCENARIO_VUS }
-];
-
+// Use the pre-configured scenarios from the test type file
 export let options = {
-  scenarios: {
-    pduSessionRelease: {
-      executor: 'ramping-vus',
-      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      stages: COMMON_STAGES,
-      exec: 'pduSessionReleaseScenario',
-      startTime: SCENARIO_START_TIMES.PDU_SESSION_RELEASE + 's'     
-    },
-    plmnChange: {
-      executor: 'ramping-vus',
-      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      stages: COMMON_STAGES,
-      exec: 'plmnChangeScenario',
-      startTime: SCENARIO_START_TIMES.PLMN_CHANGE + 's'     
-    },
-    acTyChange: {
-      executor: 'ramping-vus',
-      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      stages: COMMON_STAGES,
-      exec: 'acTyChangeScenario',
-      startTime: SCENARIO_START_TIMES.ACCESS_TYPE_CHANGE + 's'       
-    },
-    upStatusInfo: {
-      executor: 'ramping-vus',
-      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      stages: COMMON_STAGES,
-      exec: 'upStatusInfoScenario',
-      startTime: SCENARIO_START_TIMES.UP_STATUS_INFO + 's'
-    },
-    pduSessionEst: {
-      executor: 'ramping-vus',
-      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      stages: COMMON_STAGES,
-      exec: 'pduSessionEstScenario',
-      startTime: SCENARIO_START_TIMES.PDU_SESSION_EST + 's'
-    },
-    commFail: {
-      executor: 'ramping-vus',
-      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      stages: COMMON_STAGES,
-      exec: 'commFailScenario',
-      startTime: SCENARIO_START_TIMES.COMM_FAIL + 's'       
-    },
-    pcfDummyTrigger: {
-      executor: 'ramping-vus',
-      startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
-      stages: COMMON_STAGES,
-      exec: 'pcfDummyTriggerScenario',
-      startTime: SCENARIO_START_TIMES.PCF_DUMMY_TRIGGER + 's'
-    }
-  },
+  scenarios: SCENARIOS,
   ext: {
     loadimpact: {
       distribution: {
@@ -117,21 +38,12 @@ export let options = {
       }
     }
   },
-  influxdb: {
-    flushPeriod: '10s',      // Increase from default
-    bufferSize: 5000,        // Increase buffer size
-    concurrentWrites: 10     // Reduce concurrent writes
+  influxdb: INFLUXDB_CONFIG,
+  // Add test type as a tag for better InfluxDB/Grafana filtering
+  tags: {
+    testType: TEST_TYPE
   }
 };
-
-const PDU_SES_REL = loadJsonFile('./data/PDU_SES_REL.json');
-const PLMN_CH = loadJsonFile('./data/PLMN_CH.json');
-const AC_TY_CH = loadJsonFile('./data/AC_TY_CH.json');
-const UP_STATUS_INFO = loadJsonFile('./data/UP_STATUS_INFO,.json');
-const PDU_SES_EST = loadJsonFile('./data/PDU_SES_EST.json');
-const COMM_FAIL = loadJsonFile('./data/COMM_FAIL.json');
-
-const TEST_START_TIME = new Date();
 
 // Add randomization functions
 function randomizeCommonFields(payload) {
@@ -180,151 +92,114 @@ function safelyAddMetric(metric, value, tags = {}) {
 }
 
 function sendNotification(payload, scenarioType) {
-  try {
-    const startTime = new Date();
-    
-    const payloadString = JSON.stringify(payload);
-    const payloadSize = payloadString.length;
-    
-    let response = http.post(
-      'http://nwdaf:8080/nnwdaf-analyticsinfo/v1/notify',
-      payloadString,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
+  const startTime = new Date();
+  
+  const payloadString = JSON.stringify(payload);
+  const payloadSize = payloadString.length;
+  
+  let response = http.post(
+    ENDPOINTS.NOTIFICATION,
+    payloadString,
+    { headers: { 'Content-Type': 'application/json' } }
+  );
 
-    const duration = new Date() - startTime;
-    
-    // Safely add metrics with validation
-    if (isValidNumber(duration)) {
-      safelyAddMetric(notificationLatency, duration);
-      safelyAddMetric(scenarioLatency, duration, { scenario: scenarioType });
-    }
-
-    safelyAddMetric(scenarioRate, response.status === 204);
-    safelyAddMetric(scenarioErrors, response.status !== 204);
-    safelyAddMetric(eventTypeCounter, 1, { type: scenarioType });
-    safelyAddMetric(inputThroughputBytes, payloadSize);
-
-    const throughputRate = duration > 0 ? payloadSize / (duration / 1000) : 0;
-    if (isValidNumber(throughputRate)) {
-      safelyAddMetric(inputThroughputRate, throughputRate);
-    }
-
-    check(response, { 
-      'status is 204': (r) => r.status === 204,
-      'has valid headers': (r) => r.headers['Content-Type'] === 'application/json'
-    });
-    scenarioCounter.add(1, { scenario: scenarioType });
-    sleep(1);
-  } catch (error) {
-    console.error(`Error in sendNotification for ${scenarioType}:`, {
-      message: error.message,
-      stack: error.stack,
-      payload: payload
-    });
-    safelyAddMetric(scenarioErrors, 1, { type: 'error', scenario: scenarioType });
+  const duration = new Date() - startTime;
+  
+  // Safely add metrics with validation
+  if (isValidNumber(duration)) {
+    safelyAddMetric(notificationLatency, duration);
+    safelyAddMetric(scenarioLatency, duration, { scenario: scenarioType });
   }
+
+  safelyAddMetric(scenarioRate, response.status === 204);
+  safelyAddMetric(scenarioErrors, response.status !== 204);
+  safelyAddMetric(eventTypeCounter, 1, { type: scenarioType });
+  safelyAddMetric(inputThroughputBytes, payloadSize);
+
+  const throughputRate = duration > 0 ? payloadSize / (duration / 1000) : 0;
+  if (isValidNumber(throughputRate)) {
+    safelyAddMetric(inputThroughputRate, throughputRate);
+  }
+
+  check(response, { 
+    'status is 204': (r) => r.status === 204,
+    'has valid headers': (r) => r.headers['Content-Type'] === 'application/json'
+  });
+  scenarioCounter.add(1, { scenario: scenarioType });
+  sleep(1);
+  safelyAddMetric(scenarioErrors, 1, { type: 'error', scenario: scenarioType });
 }
 
 export function pduSessionReleaseScenario() {
-  try {
-    let payload = JSON.parse(PDU_SES_REL);
-    payload = randomizeCommonFields(payload);
-    payload = randomizePduSessionFields(payload);
-    sendNotification(payload,'PDUSessionRelease');
-  } catch (error) {
-    console.error('Error in pduSessionReleaseScenario:', error);
-  }
+  let payload = JSON.parse(PDU_SES_REL);
+  payload = randomizeCommonFields(payload);
+  payload = randomizePduSessionFields(payload);
+  sendNotification(payload,'PDUSessionRelease');
 }
 
 export function plmnChangeScenario() {
-  try {
-    let payload = JSON.parse(PLMN_CH);
-    payload = randomizeCommonFields(payload);
-    payload = randomizePlmnFields(payload);
-    sendNotification(payload, 'PLMNChange');
-  } catch (error) {
-    console.error('Error in plmnChangeScenario:', error);
-  }
+  let payload = JSON.parse(PLMN_CH);
+  payload = randomizeCommonFields(payload);
+  payload = randomizePlmnFields(payload);
+  sendNotification(payload, 'PLMNChange');
 }
 
 export function acTyChangeScenario() {
-  try {
-    let payload = JSON.parse(AC_TY_CH);
-    payload = randomizeCommonFields(payload);
-    payload = randomizeAccessTypeFields(payload);
-    sendNotification(payload, 'AccessTypeChange');
-  } catch (error) {
-    console.error('Error in acTyChangeScenario:', error);
-  }
+  let payload = JSON.parse(AC_TY_CH);
+  payload = randomizeCommonFields(payload);
+  payload = randomizeAccessTypeFields(payload);
+  sendNotification(payload, 'AccessTypeChange');
 }
 
 export function upStatusInfoScenario() {
-  try {
-    let payload = JSON.parse(UP_STATUS_INFO);
-    payload = randomizeCommonFields(payload);
-    sendNotification(payload, 'UPStatusInfo');
-  } catch (error) {
-    console.error('Error in upStatusInfoScenario:', error);
-  }
+  let payload = JSON.parse(UP_STATUS_INFO);
+  payload = randomizeCommonFields(payload);
+  sendNotification(payload, 'UPStatusInfo');
 }
 
 export function pduSessionEstScenario() {
-  try {
-    let payload = JSON.parse(PDU_SES_EST);
-    payload = randomizeCommonFields(payload);
-    sendNotification(payload, 'PDUSessionEstablishment');
-  } catch (error) {
-    console.error('Error in pduSessionEstScenario:', error);
-  }
+  let payload = JSON.parse(PDU_SES_EST);
+  payload = randomizeCommonFields(payload);
+  sendNotification(payload, 'PDUSessionEstablishment');
 }
 
 export function commFailScenario() {
-  try {
-    let payload = JSON.parse(COMM_FAIL);
-    payload = randomizeCommonFields(payload);
-    sendNotification(payload, 'CommFail');
-  } catch (error) {
-    console.error('Error in commFailScenario:', error);
-  }
+  let payload = JSON.parse(COMM_FAIL);
+  payload = randomizeCommonFields(payload);
+  sendNotification(payload, 'CommFail');
 }
 
 export function pcfDummyTriggerScenario() {
-  try {
-    scenarioCounter.add(1, { scenario: 'PCFDummyTrigger' });
-    const startTime = new Date(); 
+  scenarioCounter.add(1, { scenario: 'PCFDummyTrigger' });
+  const startTime = new Date(); 
 
-    const response = http.post(
-      'http://nwdaf:8080/npcf-dummy-trigger',
-      {},
-      { headers: { 'Content-Type': 'application/json' } }
-    );
+  const response = http.post(
+    ENDPOINTS.PCF_DUMMY,
+    {},
+    { headers: { 'Content-Type': 'application/json' } }
+  );
 
-    const duration = new Date() - startTime;
-    
-    if (isValidNumber(duration)) {
-      safelyAddMetric(notificationLatency, duration);
-      safelyAddMetric(scenarioLatency, duration, { scenario: 'pcfDummyTrigger' });
-    }
-
-    safelyAddMetric(scenarioRate, response.status === 200);
-    safelyAddMetric(scenarioErrors, response.status !== 200);
-    safelyAddMetric(eventTypeCounter, 1, { type: 'PCF_DUMMY_TRIGGER' });
-
-    
-
-    check(response, {
-      'status is 200': (r) => r.status === 200,
-      'has valid headers': (r) => r.headers['Content-Type'] === 'application/json'
-    });
-    const throughputRate = duration > 0 ? (response.body.length || 0) / (duration / 1000) : 0;
-    if (isValidNumber(throughputRate)) {
-      safelyAddMetric(outputThroughputRate, throughputRate);
-    }
-    safelyAddMetric( outputThroughputBytes, response.body.length || 0);
-    sleep(1);
-  } catch (error) {
-    console.error('Error in pcfDummyTriggerScenario:', error);
-    safelyAddMetric(scenarioErrors, 1, { type: 'error', scenario: 'PCFDummyTrigger' });
+  const duration = new Date() - startTime;
+  
+  if (isValidNumber(duration)) {
+    safelyAddMetric(notificationLatency, duration);
+    safelyAddMetric(scenarioLatency, duration, { scenario: 'pcfDummyTrigger' });
   }
+
+  safelyAddMetric(scenarioRate, response.status === 200);
+  safelyAddMetric(scenarioErrors, response.status !== 200);
+  safelyAddMetric(eventTypeCounter, 1, { type: 'PCF_DUMMY_TRIGGER' });
+
+  
+
+  check(response, {
+    'status is 200': (r) => r.status === 200,
+    'has valid headers': (r) => r.headers['Content-Type'] === 'application/json'
+  });
+  const throughputRate = duration > 0 ? (response.body.length || 0) / (duration / 1000) : 0;
+  if (isValidNumber(throughputRate)) {
+    safelyAddMetric(outputThroughputRate, throughputRate);
+  }
+  safelyAddMetric( outputThroughputBytes, response.body.length || 0);
+  sleep(1);
 }

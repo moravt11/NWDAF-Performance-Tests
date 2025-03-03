@@ -38,6 +38,8 @@ services:
 
   k6:
     build: ./k6
+    environment:
+      - TEST_TYPE=SPIKE
     depends_on:
       nwdaf:
         condition: service_healthy

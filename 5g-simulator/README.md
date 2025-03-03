@@ -77,3 +77,50 @@ Feel free to contribute to this project by submitting issues or pull requests. Y
 ## License
 
 This project is licensed under the MIT License.
+
+# NWDAF Performance Tests
+
+This project contains performance tests for NWDAF (Network Data Analytics Function) using K6, InfluxDB, and Grafana.
+
+## Test Types
+
+The system supports four different types of performance tests:
+
+1. **LOAD Test**: Simulates expected normal load with moderate virtual users
+2. **STRESS Test**: Gradually increases load until the system breaks to find breaking points
+3. **SOAK Test**: Sustains moderate load over a long period to find memory leaks or performance degradation
+4. **SPIKE Test**: Simulates sudden spikes in traffic to test system recovery
+
+## Running Tests with Docker Compose
+
+You can run the tests using Docker Compose by specifying the TEST_TYPE environment variable:
+
+```bash
+# Run load test (default)
+docker-compose up
+
+# Or specify a test type
+docker-compose up -e TEST_TYPE=LOAD   # Normal load test
+docker-compose up -e TEST_TYPE=STRESS # Stress test
+docker-compose up -e TEST_TYPE=SOAK   # Soak test (long duration)
+docker-compose up -e TEST_TYPE=SPIKE  # Spike test
+```
+
+Alternatively, you can set the TEST_TYPE in the docker-compose.yml file before running docker-compose up.
+
+## Test Configuration
+
+Each test type has its own configuration defined in separate files:
+
+- `config/testTypes/loadTest.js`
+- `config/testTypes/stressTest.js`
+- `config/testTypes/soakTest.js`
+- `config/testTypes/spikeTest.js`
+
+You can customize these configurations by editing the respective files.
+
+## Viewing Results
+
+- The test results are stored in InfluxDB
+- Access Grafana at http://localhost:3000 to view dashboards
+- Default Grafana login: admin/admin
