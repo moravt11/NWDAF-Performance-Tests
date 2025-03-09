@@ -30,13 +30,13 @@ export function generateScenarios(config) {
     if (COMMON_EXECUTOR === 'ramping-vus') {
       return {
         ...baseConfig,
-        startVUs: Math.max(1, Math.round(MAX_SCENARIO_VUS / 100)),
+        startVUs: rate,
         stages: COMMON_STAGES
       };
     } else if (COMMON_EXECUTOR === 'constant-vus') {
       return {
         ...baseConfig,
-        vus: Math.max(1, Math.round(MAX_SCENARIO_VUS / 7)), // Divide total VUs among scenarios
+        vus: rate,
         duration: TIME_CONFIG.DURATION
       };
     } else if (COMMON_EXECUTOR === 'constant-arrival-rate' || COMMON_EXECUTOR === 'ramping-arrival-rate') {
@@ -60,6 +60,7 @@ export function generateScenarios(config) {
     upStatusInfo: getScenarioConfig('upStatusInfo', SCENARIO_RATES.UP_STATUS_INFO),
     pduSessionEst: getScenarioConfig('pduSessionEst', SCENARIO_RATES.PDU_SESSION_EST),
     commFail: getScenarioConfig('commFail', SCENARIO_RATES.COMM_FAIL),
-    pcfDummyTrigger: getScenarioConfig('pcfDummyTrigger', SCENARIO_RATES.PCF_DUMMY_TRIGGER)
+    pcfDummyTriggerQos: getScenarioConfig('pcfDummyTriggerQos', SCENARIO_RATES.PCF_DUMMY_TRIGGER_QOS),
+    pcfDummyTriggerUe: getScenarioConfig('pcfDummyUeMobility', SCENARIO_RATES.PCF_DUMMY_TRIGGER_UE)
   };
 }

@@ -24,8 +24,6 @@ import {
   SCENARIOS,
   INFLUXDB_CONFIG,
   TEST_TYPE,
-  MAX_SCENARIO_VUS,
-  TIME_CONFIG
 } from './config/configSelector.js';
 
 // Use the pre-configured scenarios from the test type file
@@ -208,11 +206,11 @@ export function commFailScenario() {
   sendNotification(payload, 'CommFail');
 }
 
-export function pcfDummyTriggerScenario() {
-  sendPcfDummyRequest(ENDPOINTS.PCF_DUMMY_QOS, 'PCFDummyQoS');
+export function pcfDummyTriggerQosScenario() {
+  sendPcfDummyRequest(ENDPOINTS.PCF_DUMMY_QOS, 'QOS_SUSTAINABILITY');
 }
 
 export function pcfDummyUeMobilityScenario() {
-  sendPcfDummyRequest(ENDPOINTS.PCF_DUMMY_UE, 'PCFDummyUE');
+  sendPcfDummyRequest(ENDPOINTS.PCF_DUMMY_UE, 'UE_MOBILITY');
 }
 

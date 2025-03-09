@@ -13,7 +13,8 @@ const baseConfig = {
         UP_STATUS_INFO: 60,
         PDU_SESSION_EST: 60,
         COMM_FAIL: 60,
-        PCF_DUMMY_TRIGGER: 20
+        PCF_DUMMY_TRIGGER_QOS: 20,
+        PCF_DUMMY_TRIGGER_UE: 10
     },
     
     // Maximum VUs per scenario - higher value to stress the system
@@ -30,15 +31,10 @@ const baseConfig = {
         ACCESS_TYPE_CHANGE: 0,
         PDU_SESSION_EST: 0,
         COMM_FAIL: 0,
-        PCF_DUMMY_TRIGGER: 0
+        PCF_DUMMY_TRIGGER_QOS: 0,
+        PCF_DUMMY_TRIGGER_UE: 0
     },
-    
-    // Time configuration - long enough to observe system behavior
-    TIME_CONFIG: {
-        TIME_UNIT: '1s',
-        DURATION: '10m'
-    },
-    
+        
     // Common VU stages - continually increasing load
     COMMON_STAGES: [
         { target: 50, duration: '1m' },      // Warm-up
@@ -49,12 +45,6 @@ const baseConfig = {
         { target: 0, duration: '1m' }        // Cool down
     ],
     
-    // InfluxDB settings - optimized for high load
-    INFLUXDB_CONFIG: {
-        flushPeriod: '5s',
-        bufferSize: 10000,
-        concurrentWrites: 10
-    }
 };
 
 // Generate scenarios based on this configuration

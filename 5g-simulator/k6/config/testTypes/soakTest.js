@@ -13,7 +13,8 @@ const baseConfig = {
         UP_STATUS_INFO: 40,
         PDU_SESSION_EST: 40,
         COMM_FAIL: 40,
-        PCF_DUMMY_TRIGGER: 15
+        PCF_DUMMY_TRIGGER_QOS: 15,
+        PCF_DUMMY_TRIGGER_UE: 10
     },
     
     // Maximum VUs per scenario - moderate but sustained
@@ -30,7 +31,8 @@ const baseConfig = {
         ACCESS_TYPE_CHANGE: 90,
         PDU_SESSION_EST: 120,
         COMM_FAIL: 150,
-        PCF_DUMMY_TRIGGER: 180
+        PCF_DUMMY_TRIGGER_QOS: 180,
+        PCF_DUMMY_TRIGGER_UE: 190
     },
     
     // Time configuration - very long duration for soak testing
@@ -38,20 +40,6 @@ const baseConfig = {
         TIME_UNIT: '1s',
         DURATION: '60m' // 1 hour soak test
     },
-    
-    // Common VU stages - quick ramp-up, then sustained load for a long time
-    COMMON_STAGES: [
-        { target: 200, duration: '2m' },
-        { target: 300, duration: '53m' },
-        { target: 0, duration: '5m' }     // Gradual ramp-down
-    ],
-    
-    // InfluxDB settings - optimized for long-running test
-    INFLUXDB_CONFIG: {
-        flushPeriod: '20s',
-        bufferSize: 8000,
-        concurrentWrites: 5
-    }
 };
 
 // Generate scenarios based on this configuration

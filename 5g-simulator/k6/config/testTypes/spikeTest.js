@@ -13,7 +13,8 @@ const baseConfig = {
         UP_STATUS_INFO: 80,
         PDU_SESSION_EST: 80,
         COMM_FAIL: 80,
-        PCF_DUMMY_TRIGGER: 25
+        PCF_DUMMY_TRIGGER_QOS: 25,
+        PCF_DUMMY_TRIGGER_UE: 10
     },
     
     // Maximum VUs per scenario - high to accommodate spikes
@@ -30,14 +31,10 @@ const baseConfig = {
         ACCESS_TYPE_CHANGE: 0,
         PDU_SESSION_EST: 0,
         COMM_FAIL: 0,
-        PCF_DUMMY_TRIGGER: 0
+        PCF_DUMMY_TRIGGER_QOS: 0,
+        PCF_DUMMY_TRIGGER_UE: 0
     },
     
-    // Time configuration
-    TIME_CONFIG: {
-        TIME_UNIT: '1s',
-        DURATION: '8m'
-    },
     
     // Common VU stages - creating distinct spikes
     COMMON_STAGES: [
@@ -50,13 +47,6 @@ const baseConfig = {
         { target: 50, duration: '2m' },      // Cool down to baseline
         { target: 0, duration: '1m' }        // End with gradual reduction
     ],
-    
-    // InfluxDB settings - optimized for spiky traffic
-    INFLUXDB_CONFIG: {
-        flushPeriod: '3s',
-        bufferSize: 12000,
-        concurrentWrites: 15
-    }
 };
 
 // Generate scenarios based on this configuration

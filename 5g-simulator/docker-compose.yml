@@ -39,7 +39,7 @@ services:
   k6:
     build: ./k6
     environment:
-      - TEST_TYPE=SPIKE
+      - TEST_TYPE=SOAK
     depends_on:
       nwdaf:
         condition: service_healthy

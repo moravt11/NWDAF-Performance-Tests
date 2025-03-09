@@ -13,10 +13,10 @@ const baseConfig = {
         UP_STATUS_INFO: 30,
         PDU_SESSION_EST: 30,
         COMM_FAIL: 30,
-        PCF_DUMMY_TRIGGER: 10
+        PCF_DUMMY_TRIGGER_QOS: 10,
+        PCF_DUMMY_TRIGGER_UE: 10
     },
     
-    // Maximum VUs per scenario - moderate value for load test
     MAX_SCENARIO_VUS: 250,
     
     // Executor type for constant load
@@ -30,7 +30,8 @@ const baseConfig = {
         ACCESS_TYPE_CHANGE: 0,
         PDU_SESSION_EST: 0,
         COMM_FAIL: 0,
-        PCF_DUMMY_TRIGGER: 0
+        PCF_DUMMY_TRIGGER_QOS: 0,
+        PCF_DUMMY_TRIGGER_UE: 0
     },
     
     // Time configuration - moderate duration
@@ -38,20 +39,6 @@ const baseConfig = {
         TIME_UNIT: '1s',
         DURATION: '5m'
     },
-    
-    // Common VU stages - gradual ramp-up for constant-vus executor
-    COMMON_STAGES: [
-        { target: 25, duration: '30s' },
-        { target: 125, duration: '1m' },
-        { target: 250, duration: '2m30s' }
-    ],
-    
-    // InfluxDB settings
-    INFLUXDB_CONFIG: {
-        flushPeriod: '10s',
-        bufferSize: 5000,
-        concurrentWrites: 10
-    }
 };
 
 // Generate scenarios based on this configuration
