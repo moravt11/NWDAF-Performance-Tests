@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "POST",
-    "urlPattern": "/npcf-dummy-trigger"
+    "urlPattern": "/npcf-dummy-trigger-ue"
   },
   "response": {
     "status": 200,

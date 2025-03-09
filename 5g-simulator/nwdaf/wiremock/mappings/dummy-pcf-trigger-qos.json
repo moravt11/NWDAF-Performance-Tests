@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/npcf-dummy-trigger-qos"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "QOS_SUSTAINABILITY.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "areaInfo": {
+    "ecgis": [
+      {
+        "plmnId": {
+          "mcc": "230",
+          "mnc": "01"
+        },
+        "eutraCellId": "1234567"
+      }
+    ],
+    "ncgis": [
+      {
+        "plmnId": {
+          "mcc": "230",
+          "mnc": "01"
+        },
+        "nrCellId": "12345678"
+      }
+    ]
+  },
+  "startTs": "2025-02-23T08:00:00Z",
+  "endTs": "2025-02-23T10:00:00Z",
+  "qosFlowRetThd": {
+    "relFlowRetThd": 95,
+    "absFlowRetThd": 99.5
+  },
+  "ranUeThrouThd": 100000000,
+  "snssai": {
+    "sst": 3,
+    "sd": "A00B01"
+  },
+  "confidence": 85
+}

@@ -130,6 +130,45 @@ function sendNotification(payload, scenarioType) {
   safelyAddMetric(scenarioErrors, 1, { type: 'error', scenario: scenarioType });
 }
 
+/**
+ * Common function to handle PCF dummy endpoint requests
+ * @param {string} endpoint - The endpoint to send the request to
+ * @param {string} scenarioName - Name of the scenario for metrics
+ */
+function sendPcfDummyRequest(endpoint, scenarioName) {
+  scenarioCounter.add(1, { scenario: scenarioName });
+  const startTime = new Date(); 
+
+  const response = http.post(
+    endpoint,
+    {},
+    { headers: { 'Content-Type': 'application/json' } }
+  );
+
+  const duration = new Date() - startTime;
+  
+  if (isValidNumber(duration)) {
+    safelyAddMetric(notificationLatency, duration);
+    safelyAddMetric(scenarioLatency, duration, { scenario: scenarioName });
+  }
+
+  safelyAddMetric(scenarioRate, response.status === 200);
+  safelyAddMetric(scenarioErrors, response.status !== 200);
+  safelyAddMetric(eventTypeCounter, 1, { type: scenarioName });
+
+  check(response, {
+    'status is 200': (r) => r.status === 200,
+    'has valid headers': (r) => r.headers['Content-Type'] === 'application/json'
+  });
+  
+  const throughputRate = duration > 0 ? (response.body.length || 0) / (duration / 1000) : 0;
+  if (isValidNumber(throughputRate)) {
+    safelyAddMetric(outputThroughputRate, throughputRate);
+  }
+  safelyAddMetric(outputThroughputBytes, response.body.length || 0);
+  sleep(1);
+}
+
 export function pduSessionReleaseScenario() {
   let payload = JSON.parse(PDU_SES_REL);
   payload = randomizeCommonFields(payload);
@@ -170,36 +209,10 @@ export function commFailScenario() {
 }
 
 export function pcfDummyTriggerScenario() {
-  scenarioCounter.add(1, { scenario: 'PCFDummyTrigger' });
-  const startTime = new Date(); 
-
-  const response = http.post(
-    ENDPOINTS.PCF_DUMMY,
-    {},
-    { headers: { 'Content-Type': 'application/json' } }
-  );
-
-  const duration = new Date() - startTime;
-  
-  if (isValidNumber(duration)) {
-    safelyAddMetric(notificationLatency, duration);
-    safelyAddMetric(scenarioLatency, duration, { scenario: 'pcfDummyTrigger' });
-  }
-
-  safelyAddMetric(scenarioRate, response.status === 200);
-  safelyAddMetric(scenarioErrors, response.status !== 200);
-  safelyAddMetric(eventTypeCounter, 1, { type: 'PCF_DUMMY_TRIGGER' });
-
-  
-
-  check(response, {
-    'status is 200': (r) => r.status === 200,
-    'has valid headers': (r) => r.headers['Content-Type'] === 'application/json'
-  });
-  const throughputRate = duration > 0 ? (response.body.length || 0) / (duration / 1000) : 0;
-  if (isValidNumber(throughputRate)) {
-    safelyAddMetric(outputThroughputRate, throughputRate);
-  }
-  safelyAddMetric( outputThroughputBytes, response.body.length || 0);
-  sleep(1);
+  sendPcfDummyRequest(ENDPOINTS.PCF_DUMMY_QOS, 'PCFDummyQoS');
 }
+
+export function pcfDummyUeMobilityScenario() {
+  sendPcfDummyRequest(ENDPOINTS.PCF_DUMMY_UE, 'PCFDummyUE');
+}
+

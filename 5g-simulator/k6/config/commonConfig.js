@@ -29,7 +29,8 @@ export function loadJsonFile(path) {
 // Endpoints
 export const ENDPOINTS = {
     NOTIFICATION: 'http://nwdaf:8080/nnwdaf-analyticsinfo/v1/notify',
-    PCF_DUMMY: 'http://nwdaf:8080/npcf-dummy-trigger'
+    PCF_DUMMY_QOS: 'http://nwdaf:8080/npcf-dummy-trigger-qos',
+    PCF_DUMMY_UE: 'http://nwdaf:8080/npcf-dummy-trigger-ue',
 };
 
 // Load data files
