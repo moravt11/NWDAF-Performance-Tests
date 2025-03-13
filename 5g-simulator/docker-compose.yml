@@ -32,14 +32,14 @@ services:
       - 5g-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/ping"]
-      interval: 30s
-      timeout: 10s
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   k6:
     build: ./k6
     environment:
-      - TEST_TYPE=SOAK
+      - TEST_TYPE=SPIKE
     depends_on:
       nwdaf:
         condition: service_healthy

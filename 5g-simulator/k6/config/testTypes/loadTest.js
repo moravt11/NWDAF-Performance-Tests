@@ -7,14 +7,14 @@ const baseConfig = {
     
     // Scenario execution rates
     SCENARIO_RATES: {
-        PDU_SESSION_RELEASE: 10,
-        PLMN_CHANGE: 10,
-        ACCESS_TYPE_CHANGE: 30,
-        UP_STATUS_INFO: 30,
-        PDU_SESSION_EST: 30,
-        COMM_FAIL: 30,
-        PCF_DUMMY_TRIGGER_QOS: 10,
-        PCF_DUMMY_TRIGGER_UE: 10
+        PDU_SESSION_RELEASE: 100,
+        PLMN_CHANGE: 100,
+        ACCESS_TYPE_CHANGE: 300,
+        UP_STATUS_INFO: 300,
+        PDU_SESSION_EST: 300,
+        COMM_FAIL: 300,
+        PCF_DUMMY_TRIGGER_QOS: 200,
+        PCF_DUMMY_TRIGGER_UE: 200
     },
     
     MAX_SCENARIO_VUS: 250,
@@ -30,8 +30,8 @@ const baseConfig = {
         ACCESS_TYPE_CHANGE: 0,
         PDU_SESSION_EST: 0,
         COMM_FAIL: 0,
-        PCF_DUMMY_TRIGGER_QOS: 0,
-        PCF_DUMMY_TRIGGER_UE: 0
+        PCF_DUMMY_TRIGGER_QOS: 120,
+        PCF_DUMMY_TRIGGER_UE: 60
     },
     
     // Time configuration - moderate duration
