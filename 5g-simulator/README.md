@@ -13,13 +13,6 @@ This project simulates communication between two 5G network functions: NWDAF (Ne
 │   │   │   └── mapping.json
 │   │   └── __files
 │   │       └── response.json
-├── smf
-│   ├── Dockerfile
-│   ├── wiremock
-│   │   ├── mappings
-│   │   │   └── mapping.json
-│   │   └── __files
-│   │       └── response.json
 ├── docker-compose.yml
 └── README.md
 ```
@@ -80,7 +73,7 @@ This project is licensed under the MIT License.
 
 # NWDAF Performance Tests
 
-This project contains performance tests for NWDAF (Network Data Analytics Function) using K6, InfluxDB, and Grafana.
+This project contains performance tests for Network Data Analytics Function (NWDAF) in 5G networks using K6 for load testing, InfluxDB for metrics storage, and Grafana for visualization.
 
 ## Test Types
 
